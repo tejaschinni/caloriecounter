@@ -1,0 +1,122 @@
+{
+  "project_info": {
+    "project_number": "787983447237",
+    "firebase_url": "https://fruits-2a4ff.firebaseio.com",
+    "project_id": "fruits-2a4ff",
+    "storage_bucket": "fruits-2a4ff.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:787983447237:android:a1309f4546783583a46cac",
+        "android_client_info": {
+          "package_name": "app.chedo.caloriecounter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "787983447237-sjlacvfu0t24ah00gkd4qsafsqhad5kh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.chedo.caloriecounter",
+            "certificate_hash": "525c0bfc49d1b42aa69f1de4ef8f0135838efa00"
+          }
+        },
+        {
+          "client_id": "787983447237-rpqns9apifq92fbnf087iv9jk6k50nel.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVwZEQimomI_jgPgSYh8JCHjUCA9ZzoBo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "787983447237-rpqns9apifq92fbnf087iv9jk6k50nel.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:787983447237:android:34754476c09f7c3fa46cac",
+        "android_client_info": {
+          "package_name": "app.chedo.caloriescounter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "787983447237-2e2g7a4c6v58e4iede7h2ic6rkf7a478.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.chedo.caloriescounter",
+            "certificate_hash": "525c0bfc49d1b42aa69f1de4ef8f0135838efa00"
+          }
+        },
+        {
+          "client_id": "787983447237-rpqns9apifq92fbnf087iv9jk6k50nel.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVwZEQimomI_jgPgSYh8JCHjUCA9ZzoBo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "787983447237-rpqns9apifq92fbnf087iv9jk6k50nel.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:787983447237:android:4ab04fb50446d836a46cac",
+        "android_client_info": {
+          "package_name": "com.example.fruits"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "787983447237-9pv30jb1tjcrgugom663qfj8sk3g8l1d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fruits",
+            "certificate_hash": "18abd7c4bb8b8a9abb8b6ae4d1c268605a07a89b"
+          }
+        },
+        {
+          "client_id": "787983447237-rpqns9apifq92fbnf087iv9jk6k50nel.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVwZEQimomI_jgPgSYh8JCHjUCA9ZzoBo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "787983447237-rpqns9apifq92fbnf087iv9jk6k50nel.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
