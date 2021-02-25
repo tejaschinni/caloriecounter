@@ -1,3 +1,5 @@
+import 'package:caloriecounter/caloriescounter/viewRecipesPage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../data/food.dart';
@@ -17,23 +19,35 @@ class _AddRecipesPageState extends State<AddRecipesPage> {
   TextEditingController protiensController = TextEditingController();
   TextEditingController caloriesController = TextEditingController();
 
+  CollectionReference collection =
+      FirebaseFirestore.instance.collection('food');
+
   String name;
   int grams, carbon, fats, protiens, calories;
 
   List<Food> item = List();
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      // resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text('Add Recipes'),
         actions: [
-          InkWell(
-            child: Icon(Icons.home),
-            onTap: () {
-              widget.signOut();
-            },
+          Container(
+            padding: EdgeInsets.all(10),
+            child: InkWell(
+              child: Icon(Icons.home),
+              onTap: () {
+                widget.signOut();
+              },
+            ),
           )
         ],
       ),
@@ -233,13 +247,26 @@ class _AddRecipesPageState extends State<AddRecipesPage> {
                 ],
               ),
               Expanded(
+                  child: Container(
+                padding: EdgeInsets.all(5),
+                child: InkWell(
+                  child: Text('View'),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ViewRecipesPage()));
+                  },
+                ),
+              )),
+              Expanded(
                 child: Container(
                     padding: EdgeInsets.all(5),
                     child: ListView.builder(
                         itemCount: item.length,
                         itemBuilder: (BuildContext context, int index) {
                           return ListTile(
-                            title: Text(item[index].recipesName),
+                            title: Text('item[index].recipesName'),
                             subtitle: Text("Protiens =" +
                                 item[index].protines.toString() +
                                 " "
@@ -248,7 +275,7 @@ class _AddRecipesPageState extends State<AddRecipesPage> {
                                 " Carbon=" +
                                 item[index].carbon.toString() +
                                 " Fat=" +
-                                item[index].fat.toString()),
+                                item[index].fats.toString()),
                             trailing:
                                 Text("Grams=" + item[index].grams.toString()),
                           );
@@ -262,18 +289,13 @@ class _AddRecipesPageState extends State<AddRecipesPage> {
         child: Icon(Icons.add),
         onPressed: () {
           for (int i = 0; i < item.length; i++) {
-            print(item[i].recipesName);
+            print(item[i].name);
           }
           print('-----------------' + name);
-          Food a = Food(
-              calories: calories,
-              recipesName: name,
-              fat: fats,
-              carbon: carbon,
-              protines: protiens,
-              grams: grams);
+
           setState(() {
-            item.add(a);
+            // item.add(a);
+            addFood();
             print(item.length);
             nameController.text = "";
             protiensController.text = "";
@@ -291,5 +313,16 @@ class _AddRecipesPageState extends State<AddRecipesPage> {
         },
       ),
     );
+  }
+
+  Future<void> addFood() async {
+    collection.doc().set({
+      'name': name,
+      'fats': fats,
+      'grams': grams,
+      'protiens': protiens,
+      'calories': calories,
+      'carbon': carbon
+    });
   }
 }
