@@ -1,12 +1,14 @@
 import 'package:caloriecounter/caloriescounter/viewRecipesPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../data/food.dart';
 
 class AddRecipesPage extends StatefulWidget {
   Function signOut;
-  AddRecipesPage({this.signOut});
+  GoogleSignInAccount gUser;
+  AddRecipesPage({this.signOut, this.gUser});
   @override
   _AddRecipesPageState createState() => _AddRecipesPageState();
 }
@@ -20,7 +22,7 @@ class _AddRecipesPageState extends State<AddRecipesPage> {
   TextEditingController caloriesController = TextEditingController();
 
   CollectionReference collection =
-      FirebaseFirestore.instance.collection('food');
+      FirebaseFirestore.instance.collection('fooder');
 
   String name;
   int grams, carbon, fats, protiens, calories;
@@ -259,28 +261,28 @@ class _AddRecipesPageState extends State<AddRecipesPage> {
                   },
                 ),
               )),
-              Expanded(
-                child: Container(
-                    padding: EdgeInsets.all(5),
-                    child: ListView.builder(
-                        itemCount: item.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return ListTile(
-                            title: Text('item[index].recipesName'),
-                            subtitle: Text("Protiens =" +
-                                item[index].protines.toString() +
-                                " "
-                                    "Calories=" +
-                                item[index].calories.toString() +
-                                " Carbon=" +
-                                item[index].carbon.toString() +
-                                " Fat=" +
-                                item[index].fats.toString()),
-                            trailing:
-                                Text("Grams=" + item[index].grams.toString()),
-                          );
-                        })),
-              )
+              // Expanded(
+              //   child: Container(
+              //       padding: EdgeInsets.all(5),
+              //       child: ListView.builder(
+              //           itemCount: item.length,
+              //           itemBuilder: (BuildContext context, int index) {
+              //             return ListTile(
+              //               title: Text('item[index].recipesName'),
+              //               subtitle: Text("Protiens =" +
+              //                   item[index].protines.toString() +
+              //                   " "
+              //                       "Calories=" +
+              //                   item[index].calories.toString() +
+              //                   " Carbon=" +
+              //                   item[index].carbon.toString() +
+              //                   " Fat=" +
+              //                   item[index].fats.toString()),
+              //               trailing:
+              //                   Text("Grams=" + item[index].grams.toString()),
+              //             );
+              //           })),
+              // )
             ],
           ),
         ),
@@ -316,7 +318,7 @@ class _AddRecipesPageState extends State<AddRecipesPage> {
   }
 
   Future<void> addFood() async {
-    collection.doc().set({
+    collection.doc(widget.gUser.email).collection('food').doc().set({
       'name': name,
       'fats': fats,
       'grams': grams,

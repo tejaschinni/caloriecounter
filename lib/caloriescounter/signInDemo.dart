@@ -8,6 +8,7 @@ import 'dart:async';
 
 import 'package:caloriecounter/caloriescounter/addRecipesPage.dart';
 import 'package:caloriecounter/caloriescounter/constant.dart';
+import 'package:caloriecounter/caloriescounter/viewRecipesPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -23,6 +24,8 @@ class SignInDemo extends StatefulWidget {
 
 class SignInDemoState extends State<SignInDemo> {
   GoogleSignInAccount _currentUser;
+  String gUser;
+
   // FirebaseUser user;
   String _contactText;
 
@@ -62,7 +65,8 @@ class SignInDemoState extends State<SignInDemo> {
 
   Widget _buildBody() {
     if (_currentUser != null) {
-      return AddRecipesPage(
+      return ViewRecipesPage(
+        gUser: _currentUser,
         signOut: signOut,
       );
     } else {
