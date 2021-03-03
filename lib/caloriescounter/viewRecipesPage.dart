@@ -1,4 +1,5 @@
 import 'package:caloriecounter/caloriescounter/addRecipesPage.dart';
+import 'package:caloriecounter/demo/dateScrollDemo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -6,7 +7,10 @@ import 'package:google_sign_in/google_sign_in.dart';
 class ViewRecipesPage extends StatefulWidget {
   Function signOut;
   GoogleSignInAccount gUser;
-  ViewRecipesPage({this.signOut, this.gUser});
+  ViewRecipesPage({
+    this.signOut,
+    this.gUser,
+  });
 
   @override
   _ViewRecipesPageState createState() => _ViewRecipesPageState();
@@ -14,11 +18,18 @@ class ViewRecipesPage extends StatefulWidget {
 
 class _ViewRecipesPageState extends State<ViewRecipesPage> {
   int val, tprot = 0, tcal = 0, tcab = 0, tfat = 0, tgram = 0;
+  DateTime _selectedDate;
+  String date;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    setState(() {
+      _selectedDate = DateTime(
+          DateTime.now().year, DateTime.now().month, DateTime.now().day);
+      print(_selectedDate);
+    });
   }
 
   @override
@@ -27,23 +38,32 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           print(MediaQuery.of(context).size.width);
+          print('--------sss-----------' + _selectedDate.toString());
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => AddRecipesPage(
                         gUser: widget.gUser,
                         signOut: widget.signOut,
+                        selectedDate: _selectedDate,
                       )));
         },
       ),
       appBar: AppBar(
         title: Text('View'),
       ),
+      // body: Container(
+      //   child: DateScrollDemo(
+      //     setDateTime: setDateTime,
+      //   ),
+      // ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
-            .collection('fooder')
+            .collection('caloriecounter')
             .doc(widget.gUser.email)
             .collection('food')
+            .doc(_selectedDate.toString())
+            .collection('meals')
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
@@ -51,9 +71,11 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
               child: CircularProgressIndicator(),
             );
           }
+          print('================' + snapshot.toString());
           final food = snapshot.data.docs;
           calc(food, food.length);
-          return food.length == 0
+
+          return snapshot.hasError
               ? Container()
               : Column(
                   children: [
@@ -179,6 +201,12 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
                       ),
                     )),
                     Expanded(
+                        child: Container(
+                      child: DateScrollDemo(
+                        setDateTime: setDateTime,
+                      ),
+                    )),
+                    Expanded(
                       flex: 4,
                       child: ListView.builder(
                           itemCount: food.length,
@@ -275,6 +303,14 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
       tprot = tprot + item['protiens'];
       tgram = tgram + item['grams'];
     }
-    print('-------------------' + tcab.toString());
+    print('--------food---------' + food.length.toString());
+  }
+
+  void setDateTime(DateTime _selectedValue) {
+    setState(() {
+      this._selectedDate = _selectedValue;
+    });
+
+    print('--------sss-----------' + _selectedDate.toString());
   }
 }
