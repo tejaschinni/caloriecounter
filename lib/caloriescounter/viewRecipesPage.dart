@@ -20,6 +20,7 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
   int val, tprot = 0, tcal = 0, tcab = 0, tfat = 0, tgram = 0;
   DateTime _selectedDate;
   String date;
+  bool flag = false;
 
   @override
   void initState() {
@@ -36,6 +37,7 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
         onPressed: () {
           print(MediaQuery.of(context).size.width);
           print('--------sss-----------' + _selectedDate.toString());
@@ -71,11 +73,17 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
               child: CircularProgressIndicator(),
             );
           }
-          print('================' + snapshot.toString());
-          final food = snapshot.data.docs;
-          calc(food, food.length);
-
-          return snapshot.hasError
+          var food;
+          try {
+            food = snapshot.data.docs;
+            calc(food, food.length);
+            setState(() {
+              flag = false;
+            });
+          } catch (e) {
+            print("NO DATA");
+          }
+          return flag
               ? Container()
               : Column(
                   children: [
