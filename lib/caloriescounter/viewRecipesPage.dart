@@ -1,5 +1,8 @@
 import 'package:caloriecounter/caloriescounter/addRecipesPage.dart';
-import 'package:caloriecounter/demo/dateScrollDemo.dart';
+import 'package:caloriecounter/caloriescounter/signInDemo.dart';
+import 'package:caloriecounter/caloriescounter/userDetailPage.dart';
+import 'package:caloriecounter/data/userData.dart';
+import 'package:caloriecounter/demo/flutterDateTimeDemo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -21,6 +24,9 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
   DateTime _selectedDate;
   String date;
   bool flag = false;
+  UserData userData;
+
+  List<UserData> userD = List();
 
   @override
   void initState() {
@@ -30,6 +36,7 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
       _selectedDate = DateTime(
           DateTime.now().year, DateTime.now().month, DateTime.now().day);
       print(_selectedDate);
+      getUserDate();
     });
   }
 
@@ -53,6 +60,61 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
       ),
       appBar: AppBar(
         title: Text('View'),
+        actions: [
+          Container(
+            margin: EdgeInsets.all(10),
+            width: 35.0,
+            height: 70.0,
+            decoration: BoxDecoration(
+              //color: const Color(0xff7c94b6),
+              borderRadius: BorderRadius.all(Radius.circular(50.0)),
+              border: Border.all(
+                color: Colors.white,
+                width: 2.0,
+              ),
+            ),
+            child: Container(
+              child: PopupMenuButton<String>(
+                padding: EdgeInsets.zero,
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                  const PopupMenuItem<String>(
+                    value: 'Profile',
+                    child: ListTile(
+                      leading: Icon(Icons.visibility),
+                      title: Text('Proflie'),
+                    ),
+                  ),
+                  const PopupMenuItem<String>(
+                    value: 'SignOut',
+                    child: ListTile(
+                      leading: Icon(Icons.person_add),
+                      title: Text('SignOut'),
+                    ),
+                  ),
+                ],
+                onSelected: (String s) {
+                  print(s);
+                  if (s == 'SignOut') {
+                    widget.signOut();
+
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => SignInDemo()));
+                  }
+                  if (s == 'Profile') {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => UserDetailPage(
+                                  gUser: widget.gUser,
+                                  selectedDate: _selectedDate,
+                                  signOut: widget.signOut,
+                                )));
+                  }
+                },
+              ),
+            ),
+          ),
+        ],
       ),
       // body: Container(
       //   child: DateScrollDemo(
@@ -109,11 +171,11 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  // Container(
-                                  //   child: Text('Calories',
-                                  //       style: TextStyle(
-                                  //           fontSize: 12, color: Colors.black)),
-                                  // )
+                                  Container(
+                                    child: Text('Calories',
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.black)),
+                                  )
                                 ],
                               ),
                             ),
@@ -137,11 +199,11 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  // Container(
-                                  //   child: Text('Carbs',
-                                  //       style: TextStyle(
-                                  //           fontSize: 12, color: Colors.black)),
-                                  // )
+                                  Container(
+                                    child: Text('Carbs',
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.black)),
+                                  )
                                 ],
                               ),
                             ),
@@ -165,11 +227,11 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  // Container(
-                                  //   child: Text('Fat',
-                                  //       style: TextStyle(
-                                  //           fontSize: 12, color: Colors.black)),
-                                  // )
+                                  Container(
+                                    child: Text('Fat',
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.black)),
+                                  )
                                 ],
                               ),
                             ),
@@ -193,11 +255,11 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  // Container(
-                                  //   child: Text('Protiens',
-                                  //       style: TextStyle(
-                                  //           fontSize: 12, color: Colors.black)),
-                                  // )
+                                  Container(
+                                    child: Text('Protiens',
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.black)),
+                                  )
                                 ],
                               ),
                             ),
@@ -210,86 +272,100 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
                     )),
                     Expanded(
                         child: Container(
-                      child: DateScrollDemo(
+                      child: FlutterDateTimeDemo(
                         setDateTime: setDateTime,
                       ),
                     )),
                     Expanded(
-                      flex: 4,
-                      child: ListView.builder(
-                          itemCount: food.length,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              padding: EdgeInsets.all(2),
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      width: 0.2, color: Colors.grey[300])),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                      flex: 2,
-                                      child: Container(
-                                          padding: EdgeInsets.all(12),
-                                          child: RichText(
-                                            text: TextSpan(
-                                              text: food[index]['name']
-                                                  .toString(),
-                                              style:
-                                                  DefaultTextStyle.of(context)
+                        flex: 4,
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          child: food.length == 0
+                              ? Container(
+                                  child: Center(
+                                      child: CircularProgressIndicator()))
+                              : ListView.builder(
+                                  itemCount: food.length,
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      padding: EdgeInsets.all(2),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              width: 0.2,
+                                              color: Colors.grey[300])),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                              flex: 2,
+                                              child: Container(
+                                                  padding: EdgeInsets.all(12),
+                                                  child: RichText(
+                                                    text: TextSpan(
+                                                      text: food[index]['name']
+                                                          .toString(),
+                                                      style:
+                                                          DefaultTextStyle.of(
+                                                                  context)
+                                                              .style,
+                                                      children: <TextSpan>[
+                                                        TextSpan(
+                                                            text: '\n ' +
+                                                                food[index][
+                                                                        'grams']
+                                                                    .toString() +
+                                                                ' g',
+                                                            style: TextStyle()),
+                                                      ],
+                                                    ),
+                                                  ))),
+                                          Expanded(
+                                            child: Container(
+                                              alignment: Alignment.centerRight,
+                                              padding: EdgeInsets.all(12),
+                                              child: RichText(
+                                                textAlign: TextAlign.right,
+                                                text: TextSpan(
+                                                  text: food[index]['calories']
+                                                      .toString(),
+                                                  style: DefaultTextStyle.of(
+                                                          context)
                                                       .style,
-                                              children: <TextSpan>[
-                                                TextSpan(
-                                                    text: '\n ' +
-                                                        food[index]['grams']
-                                                            .toString() +
-                                                        ' g',
-                                                    style: TextStyle()),
-                                              ],
+                                                  children: <TextSpan>[
+                                                    TextSpan(
+                                                        text: '\nC: ' +
+                                                            food[index]
+                                                                    ['carbon']
+                                                                .toString(),
+                                                        style: TextStyle(
+                                                            fontSize: 12,
+                                                            color:
+                                                                Colors.grey)),
+                                                    TextSpan(
+                                                        text: '\t F: ' +
+                                                            food[index]['fats']
+                                                                .toString(),
+                                                        style: TextStyle(
+                                                            fontSize: 12,
+                                                            color:
+                                                                Colors.orange)),
+                                                    TextSpan(
+                                                        text: '\t P: ' +
+                                                            food[index]
+                                                                    ['protiens']
+                                                                .toString(),
+                                                        style: TextStyle(
+                                                            fontSize: 12,
+                                                            color: Colors.red))
+                                                  ],
+                                                ),
+                                              ),
                                             ),
-                                          ))),
-                                  Expanded(
-                                    child: Container(
-                                      alignment: Alignment.centerRight,
-                                      padding: EdgeInsets.all(12),
-                                      child: RichText(
-                                        textAlign: TextAlign.right,
-                                        text: TextSpan(
-                                          text: food[index]['calories']
-                                              .toString(),
-                                          style: DefaultTextStyle.of(context)
-                                              .style,
-                                          children: <TextSpan>[
-                                            TextSpan(
-                                                text: '\nC: ' +
-                                                    food[index]['carbon']
-                                                        .toString(),
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.grey)),
-                                            TextSpan(
-                                                text: '\t F: ' +
-                                                    food[index]['fats']
-                                                        .toString(),
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.orange)),
-                                            TextSpan(
-                                                text: '\t P: ' +
-                                                    food[index]['protiens']
-                                                        .toString(),
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.red))
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }),
-                    ),
+                                    );
+                                  }),
+                        )),
                   ],
                 );
         },
@@ -318,7 +394,21 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
     setState(() {
       this._selectedDate = _selectedValue;
     });
+    //this._selectedDate = _selectedValue;
 
     print('--------sss-----------' + _selectedDate.toString());
+  }
+
+  void getUserDate() async {
+    final QuerySnapshot result =
+        await FirebaseFirestore.instance.collection('caloriecounter').get();
+
+    final List<DocumentSnapshot> documents = result.docs;
+    documents.forEach((data) {
+      final user = UserData.fromSnapshot(data);
+      userD.add(user);
+
+      print('User name ' + userD.length.toString());
+    });
   }
 }
