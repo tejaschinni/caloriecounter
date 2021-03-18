@@ -61,7 +61,7 @@ class _DateScrollDemoState extends State<DateScrollDemo> {
             scale: 0.6,
             child: Container(
               child: DatePicker(
-                DateTime(2021, 1, 1),
+                DateTime.now(),
                 width: 70,
                 height: 100,
                 controller: _controller,

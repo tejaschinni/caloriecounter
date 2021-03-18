@@ -1,3 +1,4 @@
+import 'package:caloriecounter/data/userData.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -6,7 +7,8 @@ class UserDetailPage extends StatefulWidget {
   Function signOut;
   GoogleSignInAccount gUser;
   DateTime selectedDate;
-  UserDetailPage({this.gUser, this.selectedDate, this.signOut});
+  UserData userData;
+  UserDetailPage({this.gUser, this.selectedDate, this.signOut, this.userData});
   @override
   _UserDetailPageState createState() => _UserDetailPageState();
 }
@@ -16,7 +18,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
   TextEditingController mobileController = TextEditingController();
   TextEditingController weigthController = TextEditingController();
 
-  String userName;
+  String name;
   int weigth, mobile;
 
   CollectionReference collection =
@@ -29,8 +31,13 @@ class _UserDetailPageState extends State<UserDetailPage> {
     setState(() {
       widget.selectedDate = DateTime(
           DateTime.now().year, DateTime.now().month, DateTime.now().day);
+      userNameController.text = widget.userData.name.toString();
+      weigthController.text = widget.userData.weigth.toString();
+      mobileController.text = widget.userData.mobile.toString();
     });
-    print(userNameController);
+
+    print(widget.gUser.email.toString());
+    print(widget.userData.date.toDate().toString());
   }
 
   @override
@@ -68,7 +75,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                       controller: userNameController,
                       onChanged: (String val) {
                         setState(() {
-                          userName = val;
+                          name = val;
                         });
                       },
                       decoration: InputDecoration(
@@ -157,7 +164,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
 
   Future<void> userDetail() async {
     collection.doc(widget.gUser.email).set({
-      'name': userName,
+      'name': name,
       'mobile': mobile,
       'weigth': weigth,
       'date': widget.selectedDate

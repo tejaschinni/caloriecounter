@@ -1,4 +1,6 @@
 import 'package:caloriecounter/caloriescounter/viewRecipesPage.dart';
+import 'package:caloriecounter/data/totalCalData.dart';
+import 'package:caloriecounter/data/userData.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -8,7 +10,9 @@ import '../data/food.dart';
 class AddRecipesPage extends StatefulWidget {
   Function signOut;
   GoogleSignInAccount gUser;
-  AddRecipesPage({this.signOut, this.gUser});
+  DateTime selectedDate;
+  UserData userData;
+  AddRecipesPage({this.signOut, this.gUser, this.selectedDate, this.userData});
   @override
   _AddRecipesPageState createState() => _AddRecipesPageState();
 }
@@ -22,17 +26,32 @@ class _AddRecipesPageState extends State<AddRecipesPage> {
   TextEditingController caloriesController = TextEditingController();
 
   CollectionReference collection =
-      FirebaseFirestore.instance.collection('fooder');
+      FirebaseFirestore.instance.collection('caloriecounter');
 
   String name;
-  int grams, carbon, fats, protiens, calories;
+  int grams,
+      carbon,
+      fats,
+      protiens,
+      calories,
+      tcab = 0,
+      tcal = 0,
+      tfat = 0,
+      tgram = 0,
+      tprot = 0;
 
-  List<Food> item = List();
+  List<Food> fooditem = List();
+
+  TotalCalData totalCalData;
+  Food food;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    //print(' -------------selected date-----------' + item.length.toString());
+    //getcalDate();
+    fetchData();
   }
 
   @override
@@ -261,28 +280,6 @@ class _AddRecipesPageState extends State<AddRecipesPage> {
                   },
                 ),
               )),
-              // Expanded(
-              //   child: Container(
-              //       padding: EdgeInsets.all(5),
-              //       child: ListView.builder(
-              //           itemCount: item.length,
-              //           itemBuilder: (BuildContext context, int index) {
-              //             return ListTile(
-              //               title: Text('item[index].recipesName'),
-              //               subtitle: Text("Protiens =" +
-              //                   item[index].protines.toString() +
-              //                   " "
-              //                       "Calories=" +
-              //                   item[index].calories.toString() +
-              //                   " Carbon=" +
-              //                   item[index].carbon.toString() +
-              //                   " Fat=" +
-              //                   item[index].fats.toString()),
-              //               trailing:
-              //                   Text("Grams=" + item[index].grams.toString()),
-              //             );
-              //           })),
-              // )
             ],
           ),
         ),
@@ -290,15 +287,9 @@ class _AddRecipesPageState extends State<AddRecipesPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          for (int i = 0; i < item.length; i++) {
-            print(item[i].name);
-          }
-          print('-----------------' + name);
-
           setState(() {
-            // item.add(a);
             addFood();
-            print(item.length);
+            // fetchData();
             nameController.text = "";
             protiensController.text = "";
             caloriesController.text = "";
@@ -311,6 +302,13 @@ class _AddRecipesPageState extends State<AddRecipesPage> {
             protiens = 0;
             calories = 0;
             carbon = 0;
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ViewRecipesPage(
+                          gUser: widget.gUser,
+                          signOut: widget.signOut,
+                        )));
           });
         },
       ),
@@ -318,7 +316,13 @@ class _AddRecipesPageState extends State<AddRecipesPage> {
   }
 
   Future<void> addFood() async {
-    collection.doc(widget.gUser.email).collection('food').doc().set({
+    collection
+        .doc(widget.gUser.email)
+        .collection('food')
+        .doc(widget.selectedDate.toString())
+        .collection('meals')
+        .doc()
+        .set({
       'name': name,
       'fats': fats,
       'grams': grams,
@@ -326,5 +330,64 @@ class _AddRecipesPageState extends State<AddRecipesPage> {
       'calories': calories,
       'carbon': carbon
     });
+
+    // collection
+    //     .doc(widget.gUser.email)
+    //     .collection('food')
+    //     .doc(widget.selectedDate.toString())
+    //     .set({
+    //   'tcalories': tcal,
+    //   'tcrabs': tcab,
+    //   'tfat': tfat,
+    //   'tprotiens': tprot,
+    //   'tgram': tgram
+    // });
+  }
+
+  fetchData() async {
+    FirebaseFirestore.instance
+        .collection('caloriecounter')
+        .doc(widget.gUser.email)
+        .collection('food')
+        .doc(widget.selectedDate.toString())
+        .collection('meals')
+        .get()
+        .then((QuerySnapshot querySnapshot) => {
+              querySnapshot.docs.forEach((doc) {
+                print(doc["carbon"]);
+                tcab = 0;
+                tcal = 0;
+                tfat = 0;
+                tgram = 0;
+                tprot = 0;
+                for (var item in querySnapshot.docs) {
+                  tcab = tcab + item['carbon'];
+                  tcal = tcal + item['calories'];
+                  tfat = tfat + item['fats'];
+                  tprot = tprot + item['protiens'];
+                  tgram = tgram + item['grams'];
+                }
+              }),
+              print('Carbs total' + tcab.toString()),
+              print('Carbs total' + tcal.toString()),
+              print('Carbs total' + tfat.toString()),
+              print('Carbs total' + tprot.toString())
+            });
+  }
+
+  void calc(food, l) async {
+    //print("____________________________" + food[1]['carbon'].toString());
+    tcab = 0;
+    tcal = 0;
+    tfat = 0;
+    tgram = 0;
+    tprot = 0;
+    for (var item in food) {
+      tcab = tcab + item['carbon'];
+      tcal = tcal + item['calories'];
+      tfat = tfat + item['fats'];
+      tprot = tprot + item['protiens'];
+      tgram = tgram + item['grams'];
+    }
   }
 }

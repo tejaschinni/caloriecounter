@@ -1,10 +1,13 @@
+import 'package:caloriecounter/data/userData.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_date_picker_timeline/flutter_date_picker_timeline.dart';
 
 class FlutterDateTimeDemo extends StatefulWidget {
   Function setDateTime;
-  FlutterDateTimeDemo({this.setDateTime});
+  UserData userData;
+  DateTime startedDate;
+  FlutterDateTimeDemo({this.setDateTime, this.userData, this.startedDate});
   @override
   _FlutterDateTimeDemoState createState() => _FlutterDateTimeDemoState();
 }
@@ -18,9 +21,11 @@ class _FlutterDateTimeDemoState extends State<FlutterDateTimeDemo> {
             padding: const EdgeInsets.only(top: 11, bottom: 11),
             // decoration: BoxDecoration(color: const Color(0xFFF5F5F5)),
             child: FlutterDatePickerTimeline(
-              startDate: DateTime(DateTime.now().year, DateTime.now().month,
-                      DateTime.now().day)
-                  .subtract(Duration(days: 30)),
+              startDate: widget.userData.date != null
+                  ? widget.userData.date.toDate()
+                  : DateTime(DateTime.now().year, DateTime.now().month,
+                          DateTime.now().day)
+                      .subtract(Duration(days: 30)),
               endDate: DateTime(DateTime.now().year, DateTime.now().month,
                       DateTime.now().day)
                   .add(Duration(days: 30)),
