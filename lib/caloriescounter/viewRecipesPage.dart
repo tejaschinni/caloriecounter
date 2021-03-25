@@ -3,6 +3,7 @@ import 'package:caloriecounter/caloriescounter/signInDemo.dart';
 import 'package:caloriecounter/caloriescounter/userDetailPage.dart';
 import 'package:caloriecounter/data/totalCalData.dart';
 import 'package:caloriecounter/data/userData.dart';
+import 'package:caloriecounter/demo/nutritionPerDay.dart';
 import 'package:caloriecounter/demo/flutterDateTimeDemo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
@@ -28,6 +29,7 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
   bool flag = false;
   UserData userData;
   TotalCalData totalCalData;
+  var total;
 
   @override
   void initState() {
@@ -45,6 +47,7 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
     getUserDate();
     fetchData();
     getcalDate();
+    totaldata();
   }
 
   @override
@@ -131,7 +134,7 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
       //   ),
       // ),
       body: DelayedDisplay(
-        delay: Duration(milliseconds: 10),
+        delay: Duration(seconds: 1),
         child: StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection('caloriecounter')
@@ -148,8 +151,10 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
               );
             }
             var food;
+
             try {
               food = snapshot.data.docs;
+
               //calc(food, food.length);
 
               setState(() {
@@ -165,130 +170,10 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
                       Expanded(
                           child: Container(
                         padding: EdgeInsets.all(10),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                child: Column(
-                                  children: [
-                                    CircleAvatar(
-                                        backgroundColor: Colors.redAccent,
-                                        radius:
-                                            MediaQuery.of(context).size.width *
-                                                0.08,
-                                        child: Text(
-                                          totalCalData.tcalories.toString(),
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              color: Colors.white),
-                                        )),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Container(
-                                      child: Text('Calories',
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.black)),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Expanded(
-                              child: Container(
-                                child: Column(
-                                  children: [
-                                    CircleAvatar(
-                                        radius:
-                                            MediaQuery.of(context).size.width *
-                                                0.08,
-                                        backgroundColor: Colors.grey,
-                                        child: Text(
-                                            totalCalData.tcrabs.toString(),
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                color: Colors.white))),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Container(
-                                      child: Text('Carbs',
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.black)),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Expanded(
-                              child: Container(
-                                child: Column(
-                                  children: [
-                                    CircleAvatar(
-                                        radius:
-                                            MediaQuery.of(context).size.width *
-                                                0.08,
-                                        backgroundColor: Colors.orange,
-                                        child: Text(
-                                            totalCalData.tfat.toString(),
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                color: Colors.white))),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Container(
-                                      child: Text('Fat',
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.black)),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Expanded(
-                              child: Container(
-                                child: Column(
-                                  children: [
-                                    CircleAvatar(
-                                        backgroundColor: Colors.red,
-                                        radius:
-                                            MediaQuery.of(context).size.width *
-                                                0.08,
-                                        child: Text(
-                                            totalCalData.tprotiens.toString(),
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                color: Colors.white))),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Container(
-                                      child: Text('Protiens',
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.black)),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                          ],
+                        child: NutritionPerDay(
+                          gUser: widget.gUser,
+                          selectedDate: _selectedDate,
+                          userData: userData,
                         ),
                       )),
                       Expanded(
@@ -305,8 +190,7 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
                             padding: EdgeInsets.all(10),
                             child: food.length == 0
                                 ? Container(
-                                    child: Center(
-                                        child: CircularProgressIndicator()))
+                                    child: Center(child: Text('NO DATA Found')))
                                 : ListView.builder(
                                     itemCount: food.length,
                                     itemBuilder: (context, index) {
@@ -522,4 +406,6 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
               }),
             });
   }
+
+  void totaldata() {}
 }
