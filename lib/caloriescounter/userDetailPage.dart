@@ -29,11 +29,11 @@ class _UserDetailPageState extends State<UserDetailPage> {
     // TODO: implement initState
     super.initState();
     setState(() {
-      widget.selectedDate = DateTime(
-          DateTime.now().year, DateTime.now().month, DateTime.now().day);
-      userNameController.text = widget.userData.name.toString();
-      weigthController.text = widget.userData.weigth.toString();
-      mobileController.text = widget.userData.mobile.toString();
+      // widget.selectedDate = DateTime(
+      //     DateTime.now().year, DateTime.now().month, DateTime.now().day);
+      // userNameController.text = widget.userData.name.toString();
+      // weigthController.text = widget.userData.weigth.toString();
+      // mobileController.text = widget.userData.mobile.toString();
     });
 
     print(widget.gUser.email.toString());

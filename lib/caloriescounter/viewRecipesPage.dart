@@ -43,7 +43,7 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
     });
     //totalCal();
 
-    //print('Totaol Calories' + totalCalData.tcalories.toString());
+    print('User Email ID ' + widget.gUser.email.toString());
     getUserDate();
     fetchData();
     getcalDate();
